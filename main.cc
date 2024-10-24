@@ -31,12 +31,14 @@ constexpr static auto consume = [](auto parser, auto &pointer) {
   return result.result;
 };
 
+/* equivalent to (...)|(...) in regex */
 constexpr static auto any = [](auto... parsers) {
   return [=](const char *_ipt) -> parser_result {
     return {(consume(parsers, _ipt) || ...), _ipt};
   };
 };
 
+/* equvalent to (...) in regex*/
 constexpr static auto all = [](auto... parsers) {
   return [=](const char *_ipt) -> parser_result {
     return {(consume(parsers, _ipt) && ...), _ipt};
@@ -79,7 +81,7 @@ constexpr static auto is_space = []() {
   };
 };
 
-/* equivalent to (...)* in regular expressions */
+/* equivalent to (...)* in regex */
 constexpr static auto many = [](auto parser) {
   return [=](const char *_ipt) -> parser_result {
     while (consume(parser, _ipt))
@@ -88,6 +90,7 @@ constexpr static auto many = [](auto parser) {
   };
 };
 
+/* equivalent to (...)+ in regex*/
 constexpr static auto more = [](auto parser) {
   return [=](const char *_ipt) -> parser_result {
     auto first_result = parser(_ipt).result;
@@ -102,6 +105,7 @@ constexpr static auto more = [](auto parser) {
   };
 };
 
+/* wrap parser in functor with custom action on succesful parsing*/
 constexpr static auto annotate = [](auto parser, auto annotation) {
   return [=](const char *_ipt) {
     const char *const original_pointer = _ipt;
@@ -113,14 +117,6 @@ constexpr static auto annotate = [](auto parser, auto annotation) {
     return result;
   };
 };
-
-/*
-
-we need many for this
-
-(a*b)+
-
-*/
 
 enum class e_token_type {
   identifier,
