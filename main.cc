@@ -1,9 +1,12 @@
 #include <cstdio>
 #include <cstring>
-#include <iostream>
 #include <print>
 #include <tuple>
 #include <vector>
+
+/*
+WIP proof of concept parser combinator stuff
+*/
 
 using usize = std::size_t;
 
@@ -45,52 +48,6 @@ constexpr static auto eq = [](char _testcase) {
     return {_testcase == *_ipt, _ipt + 1};
   };
 };
-
-// template <typename TType, typename TFunc, std::size_t... TIndex>
-// constexpr void
-// visit_impl(TType& _tuple, const size_t _index, TFunc _func,
-// std::index_sequence<TIndex...>)
-// {
-//   ((TIndex == _index ? _func(std::get<TIndex>(_tuple)) : void()), ...);
-// }
-// template <typename TFunc, typename... TTypes, typename _Indices =
-// std::make_index_sequence<sizeof...(TTypes)>> constexpr void
-// visit_at(std::tuple<TTypes...>& _tuple, const size_t _index, TFunc _func)
-// {
-//   visit_impl(_tuple, _index, _func, _Indices{});
-// }
-// template <typename TFunc, typename... TTypes, typename _Indices =
-// std::make_index_sequence<sizeof...(TTypes)>> constexpr void visit_at(const
-// std::tuple<TTypes...>& _tuple, const size_t _index, TFunc _func)
-// {
-//   visit_impl(_tuple, _index, _func, _Indices{});
-// }
-// constexpr static auto match = [](auto... parsers) {
-//     std::tuple parser_tuple{parsers...};
-//     return [=](const char* _ipt) -> parser_result {
-//         std::vector<const char*> ipts(sizeof...(parsers), _ipt);
-//         std::vector<parser_result> results{};
-//         parser_result final_result{false, _ipt};
-//         for (usize i = 0; i != sizeof...(parsers); ++i) {
-//             visit_at (parser_tuple, i,
-//                 [&] (auto &_arg) {
-//                     using type = std::decay_t<decltype (_arg)>;
-//                     bool result = consume(_arg, ipts[i]);
-//                     if (result) {
-//                         results.push_back({true, ipts[i]});
-//                     }
-//                 });
-//         }
-//         const char* max_progress = 0;
-//         for (const auto p : results) {
-//             if (p.consume > max_progress) {
-//                 final_result = p;
-//                 max_progress = p.consume;
-//             }
-//         }
-//         return final_result;
-//     };
-// };
 
 constexpr static auto is_alpha = []() {
   return [=](const char *_ipt) -> parser_result {
@@ -277,6 +234,9 @@ int main() {
     tokens.push_back({e_token_type::semicolon, _token_value});
   });
 
+  /*
+  make sure ambiguous lexemes are sorted (might not work) -> find solution
+  */
   auto program = all(many(any(is_space(), identifier, lparen, rparen, lbrack,
                               rbrack, float_literal, double_literal,
                               int_literal, arithmetic_operator, semicolon)),
