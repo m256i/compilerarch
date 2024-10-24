@@ -238,7 +238,7 @@ int main() {
   make sure ambiguous lexemes are sorted (might not work) -> find solution
   */
   auto program = all(many(any(is_space(), identifier, lparen, rparen, lbrack,
-                              rbrack, float_literal, double_literal,
+                              rbrack, double_literal, float_literal,
                               int_literal, arithmetic_operator, semicolon)),
                      many(is_space()), eq('\0'));
 
